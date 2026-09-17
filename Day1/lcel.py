@@ -1,7 +1,8 @@
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_groq import ChatGroq
 from langchain_core.output_parsers import StrOutputParser
-
+from dotenv import load_dotenv
+load_dotenv()
 # 1. Create prompt
 prompt = ChatPromptTemplate.from_template(
     "Explain {topic} in simple words."
@@ -11,7 +12,7 @@ prompt = ChatPromptTemplate.from_template(
 model = ChatGroq(
     model="openai/gpt-oss-20b",
     temperature=0,
-    api_key="YOUR_GROQ_API_KEY"
+    
 )
 
 # 3. Create output parser

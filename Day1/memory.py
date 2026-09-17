@@ -1,11 +1,12 @@
 from langchain_groq import ChatGroq
 from langchain_core.chat_history import InMemoryChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory
-
+from dotenv import load_dotenv
+load_dotenv()
 model = ChatGroq(
     model="openai/gpt-oss-20b",
     temperature=0,
-    api_key="YOUR_GROQ_API_KEY"
+    
 )
 
 memory = InMemoryChatMessageHistory()

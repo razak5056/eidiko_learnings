@@ -1,11 +1,12 @@
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableParallel
 from langchain_groq import ChatGroq
-
+from dotenv import load_dotenv
+load_dotenv()
 model = ChatGroq(
     model="openai/gpt-oss-20b",
     temperature=0,
-    api_key="YOUR_GROQ_API_KEY"
+    
 )
 
 summary_prompt = ChatPromptTemplate.from_template(

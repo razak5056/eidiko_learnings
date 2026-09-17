@@ -1,12 +1,13 @@
 from langchain_groq import ChatGroq
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-
+from dotenv import load_dotenv
+load_dotenv()
 # Groq model
 model = ChatGroq(
     model="openai/gpt-oss-20b",
     temperature=0,
-    api_key="YOUR_GROQ_API_KEY"
+    
 )
 
 # Technical prompt

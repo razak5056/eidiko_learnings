@@ -1,11 +1,11 @@
 from langchain_groq import ChatGroq
 from langchain_core.output_parsers import StrOutputParser
-
+from dotenv import load_dotenv
+load_dotenv()
 # Model
 model = ChatGroq(
     model="openai/gpt-oss-20b",
     temperature=0,
-    api_key="YOUR_GROQ_API_KEY"
 )
 
 # Output parser

@@ -1,7 +1,8 @@
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnableSequence
 from langchain_groq import ChatGroq
-
+from dotenv import load_dotenv
+load_dotenv()
 # Prompt
 prompt = PromptTemplate(
     input_variables=["topic"],
@@ -12,7 +13,7 @@ prompt = PromptTemplate(
 model = ChatGroq(
     model="openai/gpt-oss-20b",
     temperature=0,
-    api_key="YOUR_GROQ_API_KEY"
+    
 )
 
 # RunnableSequence
