@@ -64,6 +64,7 @@ def research_source_guide(query: str, topn: int = 5, source: str = "") -> str:
 
 
 TOOLS = [calculate, research_source_guide]
+TOOLS_BY_NAME = {selected_tool.name: selected_tool for selected_tool in TOOLS}
 
 
 def researcher_agent(topic: str, area: str) -> str:
@@ -73,10 +74,14 @@ Research the topic below from the perspective of {area}.
 Topic: {topic}
 
 Use accurate, accessible language. Explain important evidence, limitations,
-and concrete examples. Do not invent citations. Use the source guide tool and
-the calculator when a calculation would make the explanation clearer.
+and concrete examples. Do not invent citations. You may use only the
+calculate and research_source_guide tools when useful. Never call any other tool.
 """
-    tool_llm = get_llm().bind_tools(TOOLS)
+    tool_llm = get_llm().bind_tools(
+        TOOLS,
+        tool_choice="auto",
+        max_tokens=150,
+    )
     messages = [
         SystemMessage(
             content="You are a careful research analyst. Use tools when useful, then answer plainly."
@@ -84,15 +89,21 @@ the calculator when a calculation would make the explanation clearer.
         HumanMessage(content=prompt),
     ]
 
-    for _ in range(3):
+    for _ in range(1):
         response = tool_llm.invoke(messages)
         messages.append(response)
         if not response.tool_calls:
             return response.content
 
         for tool_call in response.tool_calls:
-            selected_tool = next(tool for tool in TOOLS if tool.name == tool_call["name"])
-            result = selected_tool.invoke(tool_call["args"])
+            selected_tool = TOOLS_BY_NAME.get(tool_call["name"])
+            if selected_tool is None:
+                result = (
+                    f"Unsupported tool '{tool_call['name']}'. "
+                    "Use only calculate or research_source_guide."
+                )
+            else:
+                result = selected_tool.invoke(tool_call["args"])
             messages.append(
                 ToolMessage(
                     content=str(result),
@@ -114,4 +125,13 @@ Tool results:
 
 Use the tool results where relevant. Do not invent citations.
 """
-    return get_llm().invoke(final_prompt).content
+    final_response = get_llm().invoke(
+        [
+            SystemMessage(
+                content="Answer using only the supplied text. Do not call tools or mention tools."
+            ),
+            HumanMessage(content=final_prompt),
+        ],
+        max_tokens=150,
+    )
+    return final_response.content
